@@ -1,15 +1,6 @@
 ﻿/*
-* Author		:	Don Quist (don@sigmaprojects.org - http://www.sigmaprojects.org)
-* Date		:	11/09/2011
-* Version		:	1
-* Description	:
-* Simple natrual language parser for past dates.
-* Parses string likes "yesterday", "two days ago", "last week", "last month", etc.
-*
-* TODO:
-*	- Add support for things like "last December", "last year", etc
-*	- Add support for Future dates =/
-*	- Others, I'm sure.
+* Author	:	Don Quist (don@sigmaprojects.org - http://www.sigmaprojects.org)
+* GitHub	:	https://github.com/sigmaprojects/CF-NLDate/
 */
 	
 component hint="Natrual Language Date Parser" {

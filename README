@@ -1,0 +1,1 @@
+Simple natrual language parser for past dates.Parses string likes "yesterday", "two days ago", "last week", "last month", etc and returns a date objectTODO:	- Add support for things like "last December", "last year", etc	- Add support for Future dates =/	- Others, I'm sure.
