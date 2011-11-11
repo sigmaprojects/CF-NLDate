@@ -1,0 +1,131 @@
+﻿/*
+* Author		:	Don Quist (don@sigmaprojects.org - http://www.sigmaprojects.org)
+* Date		:	11/09/2011
+* Version		:	1
+* Description	:
+* Simple natrual language parser for past dates.
+* Parses string likes "yesterday", "two days ago", "last week", "last month", etc.
+*
+* TODO:
+*	- Add support for things like "last December", "last year", etc
+*	- Add support for Future dates =/
+*	- Others, I'm sure.
+*/
+	
+component hint="Natrual Language Date Parser" {
+
+	public NLDate function init() {
+		variables.words = 'one,two,three,four,five,six,seven,eight,nine,ten,eleven,twelve,thirteen,fourteen,fifteen,sixteen,seventeen,eighteen,ninteen,twenty,twentyone,twentytwo,twentythree,twentyfour,twentyfive,twentysix,twentyseven,twentyeight,twentynine,thirty,thirtyone,thirtytwo';
+		variables.numbers = '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32';
+		return this;
+	}
+
+	public string function Parse(Required String When,Date Date) {
+		var str = trim(lcase(arguments.When));
+		if(structKeyExists(arguments,'Date')) {
+			var d = arguments.date;
+		} else {
+			var d = Now();
+		}
+		switch(left(str,3)) {
+			case 'yes': { // yesterday
+				return DateAdd('d',-1,d);
+				break;
+			}
+			case 'tod': { // today
+				return d;
+				break;
+			}
+			case 'sun': case 'mon': case 'tue': case 'wed': case 'thu': case 'fri': case 'sat': {
+				return PrevOccOfDOW(part,d);
+				break;
+			}
+		}
+		if( left(str,4) is 'last') {
+			var part = ListLast(str,' ');
+			if(part is 'month') {part='mmm';} // *(see below)
+			switch(left(part,3)) {
+				case 'sun': case 'mon': case 'tue': case 'wed': case 'thu': case 'fri': case 'sat': {
+					return PrevOccOfDOW(part,d);
+					break;
+				}
+				case 'mmm': { // *lil hacky
+					return DateAdd('m',-1,d);
+					break;
+				}
+				case 'wee': {
+					return DateAdd('ww',-1,d);
+						break;
+				}
+				case 'yea': {
+					return DateAdd('y',-1,d);
+					break;
+				}
+			}
+		}
+		if( ListLen(str,' ') gte 2 ) {
+			var i = listFirst(str,' ');
+			var tnn = TextToNumber(i);
+			if( tnn ) {
+				i = tnn;
+			}
+			if( IsNumeric(i) ) {
+				var offset = i;
+				var part = listGetAt(str,2,' ');
+				var ipart = Left(part,1);
+				if(Right(part,1) is 's') { part = left(part,len(part)-1); };
+				switch(part) { // didn't have to be a swich, could have just done left(part,1), see why below.
+					case 'day': { ipart = 'd'; break; }
+					case 'week': { ipart = 'ww'; break; } // your annoying, w should be WEEK, not just weekday.
+					case 'month': { ipart = 'm'; break; }
+					case 'quarter': { ipart = 'q'; break; }
+					case 'year': { ipart = 'yyyy'; break; } // you too, making things difficult.
+					default: { ipart = 'd'; break; }
+				}
+				return DateAdd(ipart,-offset,d);
+			}
+		}
+		return d;
+	}
+
+
+	public numeric function TextToNumber(Required String sStr) {
+		// uh, not exactly scaleable - but for this purpose it'll do just fine
+		var str = trim(lcase(arguments.sStr));
+		var i = 0;
+		var num = 0;
+		if( listContains(variables.words,str) ) {
+			i = listFindNoCase(variables.words,str);
+			num = listGetAt(variables.numbers,i);
+		}
+		return num;
+	}
+
+	public string function PrevOccOfDOW(Required String DayOf,Date D) {
+		// original http://www.cflib.org/udf/PrevOccOfDOW
+		if(!StructKeyExists(arguments,'D')) {
+			var Date = Now();
+		} else {
+			var Date = D;
+		}
+		var day = Trim(Lcase(arguments.DayOf));
+		if(!IsNumeric(day)) {
+			switch(lCase(left(day,3))) {
+				case 'sun': { day = 1; break; }
+				case 'mon': { day = 2; break; }
+				case 'tue': { day = 3; break; }
+				case 'wed': { day = 4; break; }
+				case 'thu': { day = 5; break; }
+				case 'fri': { day = 6; break; }
+				case 'sat': { day = 7; break; }
+				default: { day = 1; break; }
+			}
+		}
+		var dayOffset = 7;
+		if(Day LT DayOfWeek(Date)) {
+			dayOffset = 0;
+		}
+		return DateAdd("d",- (dayOffset - (day - DayOfWeek(Date))),Now());
+	}
+	
+}
