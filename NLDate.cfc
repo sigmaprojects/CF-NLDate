@@ -3,7 +3,7 @@
 * GitHub	:	https://github.com/sigmaprojects/CF-NLDate/
 */
 	
-component hint="Natrual Language Date Parser" {
+component hint="Natural Language Date Parser" {
 
 	public NLDate function init() {
 		variables.words = 'one,two,three,four,five,six,seven,eight,nine,ten,eleven,twelve,thirteen,fourteen,fifteen,sixteen,seventeen,eighteen,ninteen,twenty,twentyone,twentytwo,twentythree,twentyfour,twentyfive,twentysix,twentyseven,twentyeight,twentynine,thirty,thirtyone,thirtytwo,couple,few';
