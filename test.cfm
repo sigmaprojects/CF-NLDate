@@ -4,10 +4,22 @@
 
 <ul>
 	<li>
-		<strong>Today: #f(NLDate.parse('today'))#</strong> 
+		<strong>Right Now: #f(Now())#</strong> 
+	</li>
+	<li>
+		Today: #f(NLDate.parse('today'))# 
+	</li>
+	<li>
+		Tomorrow: #f(NLDate.parse('tomorrow'))# 
 	</li>
 	<li>
 		Yesterday: #f(NLDate.parse('yesterday'))#
+	</li>
+	<li>
+		In an hour: #f(NLDate.parse('in an hour'))#
+	</li>
+	<li>
+		In 2 days: #f(NLDate.parse('in 2 days'))#
 	</li>
 	<li>
 		Last Week: #f(NLDate.parse('last week'))#
@@ -35,6 +47,6 @@
 </cfoutput>
 <cfscript>
 	public string function f(Required Date Date) {
-		return dateFormat(arguments.Date,'long');
+		return dateFormat(arguments.Date,'long') & ' ' & timeFormat(arguments.Date,'long');
 	}
 </cfscript>

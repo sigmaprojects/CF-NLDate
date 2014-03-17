@@ -1,6 +1,8 @@
 Simple natrual language parser for past dates.
 Parses string likes "yesterday", "two days ago", "last week", "last month", etc and returns a date object
 
+4/16/14: Good news!  Partial support for future dates.  Things like "In an hour" "In 5 days".
+
 TODO:
-	- Add support for Future dates =/
+	- Better support for future days, i.e. "In a *few* hours*"
 	- Others, I'm sure.

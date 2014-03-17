@@ -6,8 +6,8 @@
 component hint="Natural Language Date Parser" {
 
 	public NLDate function init() {
-		variables.words = 'one,two,three,four,five,six,seven,eight,nine,ten,eleven,twelve,thirteen,fourteen,fifteen,sixteen,seventeen,eighteen,ninteen,twenty,twentyone,twentytwo,twentythree,twentyfour,twentyfive,twentysix,twentyseven,twentyeight,twentynine,thirty,thirtyone,thirtytwo,couple,few';
-		variables.numbers = '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,2,3';
+		variables.words = 'one,two,three,four,five,six,seven,eight,nine,ten,eleven,twelve,thirteen,fourteen,fifteen,sixteen,seventeen,eighteen,ninteen,twenty,twentyone,twentytwo,twentythree,twentyfour,twentyfive,twentysix,twentyseven,twentyeight,twentynine,thirty,thirtyone,thirtytwo,couple,few,a,an';
+		variables.numbers = '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,2,3,1,1';
 		variables.months = 'Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec';
 		return this;
 	}
@@ -26,6 +26,10 @@ component hint="Natural Language Date Parser" {
 			}
 			case 'tod': { // today
 				return d;
+				break;
+			}
+			case 'tom': { // tomorrow
+				return DateAdd('d',1,d);
 				break;
 			}
 			case 'sun': case 'mon': case 'tue': case 'wed': case 'thu': case 'fri': case 'sat': {
@@ -59,7 +63,39 @@ component hint="Natural Language Date Parser" {
 				}
 			}
 		}
-		if( ListLen(str,' ') gte 2 ) {
+		
+		if( left(str,2) is 'in' && ListLen(str,' ') gte 2 ) {
+			
+			var tn = listGetAt(str,2,' ');
+
+			if( !isNumeric(tn) ) {
+				var tnn = TextToNumber(tn);
+				if( tnn ) {
+					var i = tnn;
+				}
+			} else {
+				var i = tn;
+			}
+
+			if( IsNumeric(i) ) {
+				var part = listLast(str,' ');
+				var offset = i;
+				var ipart = Left(part,1);
+				if(Right(part,1) is 's') { part = left(part,len(part)-1); };
+				switch(part) {
+					case 'second': case 'sec': { ipart = 's'; break; }
+					case 'minute': case 'min': { ipart = 'n'; break; }
+					case 'hour': { ipart = 'h'; break; }
+					case 'day': { ipart = 'd'; break; }
+					case 'week': { ipart = 'ww'; break; }
+					case 'month': { ipart = 'm'; break; }
+					case 'quarter': { ipart = 'q'; break; }
+					case 'year': { ipart = 'yyyy'; break; }
+					default: { ipart = 'h'; break; }
+				}
+				return DateAdd(ipart,offset,d);
+			}
+		} else if( ListLen(str,' ') gte 2 ) {
 			if(Left(str,2) is 'a ') {
 				str = right(str,len(str)-2);
 			}
